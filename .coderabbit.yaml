@@ -9,3 +9,25 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
+
+knowledge_base:
+  linked_repositories:
+    - repository: "Hendrik040/coderabbit-demo-mastra-frontend"
+      instructions: >
+        Next.js frontend that calls the Mastra backend workflow API through
+        the proxy at app/api/proxy/route.ts. This proxy forwards POST requests
+        to the backend and passes through the response to the UI.
+
+        Pay close attention to:
+        - Field names in the request body sent to the backend (e.g. the inputData
+          payload shape) — if the backend renames or restructures its input schema,
+          the proxy must be updated to match or requests will fail validation.
+        - Field names read from the API response (e.g. data.result, data.version,
+          data.refined) — if the backend renames or removes output fields, the UI
+          will silently receive undefined without any compile-time error.
+        - Any hardcoded workflow IDs or endpoint paths in the proxy that must stay
+          in sync with the backend routing.
+
+        A contract change on either the input or output side of the backend that
+        is not reflected in this frontend will not produce a TypeScript error —
+        it will only surface as a runtime failure or silent broken UI.
