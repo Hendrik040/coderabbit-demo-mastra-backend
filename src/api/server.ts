@@ -1,3 +1,9 @@
+// =============================================================================
+// THIS FILE REPRESENTS THE STATE OF server.ts AFTER THE BREAKING-CHANGE PR
+//
+// In the demo, copy this content over server.ts alongside the workflow change.
+// =============================================================================
+
 import express from 'express';
 import { mastra } from '../mastra';
 
@@ -16,8 +22,8 @@ app.post('/api/query', async (req, res) => {
     const run = await workflow.createRun();
     const result = await run.start({ inputData: { query } });
 
-    // Returns: { result: string }
-    res.json({ result: result.result });
+    // CHANGED: returns { response: { text, metadata } } instead of { result }
+    res.json({ response: result.response });
   } catch (error) {
     console.error('Workflow execution failed:', error);
     res.status(500).json({ error: 'Workflow execution failed' });
