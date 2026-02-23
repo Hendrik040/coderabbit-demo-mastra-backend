@@ -37,12 +37,12 @@ const REPO_COMMITS = [
 ];
 
 // ─── Step 1: Parse commits ────────────────────────────────────────────────────
-// Extracts fromRef, toRef, and instructions from the raw query string,
+// Extracts fromRef, toRef, and instructions from the raw commitLog string,
 // then asks an LLM to classify each commit into a structured object.
 
 const parseCommitsStep = createStep({
   id: "parse-commits",
-  description: "Parse the commit range query and classify commits by type using GPT-4o mini",
+  description: "Parse the commit log and classify commits by type using GPT-4o mini",
   inputSchema: z.object({
     commitLog: z.string(),
   }),
@@ -266,7 +266,7 @@ const draftStep = createStep({
     suggestions: z.array(z.string()),
   }),
   execute: async ({ inputData, getInitData }) => {
-    const init     = getInitData<{ query: string }>();
+    const init     = getInitData<{ commitLog: string }>();
     const features    = inputData["enrich-features"]?.enrichedFeatures   ?? [];
     const fixes       = inputData["enrich-fixes"]?.enrichedFixes          ?? [];
     const perf        = inputData["enrich-fixes"]?.enrichedPerformance    ?? [];
@@ -300,7 +300,7 @@ Assemble these enriched commits into polished Markdown release notes using this 
 
 (Omit sections with no entries.)
 
-Original request context: ${init?.query ?? ""}
+Original request context: ${init?.commitLog ?? ""}
 
 Features:
 ${features.map((f) => `- ${f.title}: ${f.description}`).join("\n") || "(none)"}
