@@ -1,0 +1,12 @@
+knowledge_base:
+  linked_repositories:
+    - repository: "Hendrik040/coderabbit-demo-mastra-frontend"
+      instructions: >
+        Next.js frontend that calls the Mastra backend workflow API through
+        the proxy at app/api/proxy/route.ts. This proxy forwards POST requests
+        to the backend and passes through the response to the UI.
+
+        Pay close attention to:
+        - Field names in the request body sent to the backend (e.g. the inputData
+          payload shape) — if the backend renames or restructures its input schema,
+          the proxy must be updated to match or requests will fail validation.
