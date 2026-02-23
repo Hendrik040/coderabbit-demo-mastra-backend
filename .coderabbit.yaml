@@ -1,0 +1,12 @@
+knowledge_base:
+  linked_repositories:
+    - repository: "Hendrik040/coderabbit-demo-mastra-frontend"
+      instructions: >
+        Next.js frontend that consumes the backend /api/query endpoint.
+        The ChatWidget component at app/components/ChatWidget.tsx reads
+        `data.result` from the API response to display the AI reply.
+        The proxy route at app/api/proxy/route.ts forwards POST requests
+        to the backend. Pay close attention to any field names from the
+        API response that the frontend accesses directly (e.g. data.result,
+        data.message, data.response). A change to the backend response shape
+        that is not reflected in ChatWidget.tsx will silently break the UI.
