@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Mastra Studio build & local DB
+.mastra/
+local.db
+local.db-shm
+local.db-wal
+
+# Environment — never commit real keys
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
