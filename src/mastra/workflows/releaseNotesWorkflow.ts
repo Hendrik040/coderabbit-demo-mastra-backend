@@ -37,14 +37,14 @@ const REPO_COMMITS = [
 ];
 
 // ─── Step 1: Parse commits ────────────────────────────────────────────────────
-// Extracts fromRef, toRef, and instructions from the raw query string,
+// Extracts fromRef, toRef, and instructions from the raw commitLog string,
 // then asks an LLM to classify each commit into a structured object.
 
 const parseCommitsStep = createStep({
   id: "parse-commits",
-  description: "Parse the commit range query and classify commits by type using GPT-4o mini",
+  description: "Parse the commit range commitLog and classify commits by type using GPT-4o mini",
   inputSchema: z.object({
-    query: z.string(),
+    commitLog: z.string(),
   }),
   outputSchema: z.object({
     fromRef: z.string(),
@@ -53,7 +53,7 @@ const parseCommitsStep = createStep({
     commits: z.array(commitSchema),
   }),
   execute: async ({ inputData }) => {
-    const lines = inputData.query.split("\n");
+    const lines = inputData.commitLog.split("\n");
     const refMatch = lines[0].match(/commits?\s+([a-f0-9]+)\.\.([a-f0-9]+)/i);
     const fromRef = refMatch?.[1] ?? "HEAD~12";
     const toRef = refMatch?.[2] ?? "HEAD";
@@ -266,7 +266,7 @@ const draftStep = createStep({
     suggestions: z.array(z.string()),
   }),
   execute: async ({ inputData, getInitData }) => {
-    const init     = getInitData<{ query: string }>();
+    const init     = getInitData<{ commitLog: string }>();
     const features    = inputData["enrich-features"]?.enrichedFeatures   ?? [];
     const fixes       = inputData["enrich-fixes"]?.enrichedFixes          ?? [];
     const perf        = inputData["enrich-fixes"]?.enrichedPerformance    ?? [];
@@ -300,7 +300,7 @@ Assemble these enriched commits into polished Markdown release notes using this 
 
 (Omit sections with no entries.)
 
-Original request context: ${init?.query ?? ""}
+Original request context: ${init?.commitLog ?? ""}
 
 Features:
 ${features.map((f) => `- ${f.title}: ${f.description}`).join("\n") || "(none)"}
@@ -430,7 +430,7 @@ export const releaseNotesWorkflow = createWorkflow({
   description:
     "Multi-step AI workflow: parse commits → categorize → parallel enrich → draft → quality-review branch → finalize",
   inputSchema: z.object({
-    query: z.string().describe("Commit range (e.g. 'f59ffed..9f130dd') plus optional instructions"),
+    commitLog: z.string().describe("Commit range (e.g. 'f59ffed..9f130dd') plus optional instructions"),
   }),
   outputSchema: z.object({
     result:  z.string(),
