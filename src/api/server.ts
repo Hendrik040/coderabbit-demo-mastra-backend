@@ -31,13 +31,13 @@ const swaggerSpec = {
             "application/json": {
               schema: {
                 type: "object",
-                required: ["query"],
+                required: ["commitLog"],
                 properties: {
-                  query: {
+                  commitLog: {
                     type: "string",
                     description:
                       "Commit range and optional instructions.",
-                    example: "Generate release notes for commits f59ffed..9f130dd",
+                    example: "commits f59ffed..9f130dd",
                   },
                 },
               },
@@ -60,7 +60,7 @@ const swaggerSpec = {
               },
             },
           },
-          400: { description: "Missing or invalid query field" },
+          400: { description: "Missing or invalid commitLog field" },
           500: { description: "Workflow execution failed" },
         },
       },
@@ -74,16 +74,16 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get("/", (_req, res) => res.redirect("/api-docs"));
 
 app.post("/api/query", async (req, res) => {
-  const { query } = req.body as { query?: string };
+  const { commitLog } = req.body as { commitLog?: string };
 
-  if (!query || typeof query !== "string") {
-    return res.status(400).json({ error: "query is required" });
+  if (!commitLog || typeof commitLog !== "string") {
+    return res.status(400).json({ error: "commitLog is required" });
   }
 
   try {
-    const workflow = mastra.getWorkflow("release-notes-workflow");
+    const workflow = mastra.getWorkflow("releaseNotesWorkflow");
     const run      = await workflow.createRun();
-    const output   = await run.start({ inputData: { query } });
+    const output   = await run.start({ inputData: { commitLog } as any });
 
     // Unwrap Mastra result envelope if present
     const result = (output as any)?.result ?? output;

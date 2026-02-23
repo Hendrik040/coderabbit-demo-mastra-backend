@@ -122,7 +122,7 @@ const categorizeStep = createStep({
     );
 
     const hasBreaking     = commits.some((c) => c.breaking);
-    const versionBump     = hasBreaking ? "major" : features.length > 0 ? "minor" : "patch";
+    const versionBump     = (hasBreaking ? "major" : features.length > 0 ? "minor" : "patch") as "major" | "minor" | "patch";
     const suggestedVersion = versionBump === "major" ? "v3.0.0"
       : versionBump === "minor" ? "v2.1.0"
       : "v2.0.1";

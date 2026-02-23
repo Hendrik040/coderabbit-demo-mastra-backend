@@ -108,12 +108,14 @@ describe("commit categorisation", () => {
   });
 
   it("determines patch bump when there are only fixes and maintenance", () => {
-    const patchCommits = commits.filter((c) => c.type !== "feat" && c.type !== "perf");
-    const bump = patchCommits.some((c) => c.breaking)
-      ? "major"
-      : patchCommits.some((c) => c.type === "feat")
-      ? "minor"
-      : "patch";
+    const fixOnly: Array<{ sha: string; type: string; message: string; breaking: boolean }> = [
+      { sha: "aaa0001", type: "fix",   message: "fix login crash",     breaking: false },
+      { sha: "aaa0002", type: "chore", message: "update deps",         breaking: false },
+      { sha: "aaa0003", type: "test",  message: "add regression test", breaking: false },
+    ];
+    const hasBreaking = fixOnly.some((c) => c.breaking);
+    const hasFeat     = fixOnly.some((c) => c.type === "feat");
+    const bump = hasBreaking ? "major" : hasFeat ? "minor" : "patch";
     expect(bump).toBe("patch");
   });
 });
